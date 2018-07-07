@@ -6,8 +6,13 @@ spec:
     selector:
         app: lock-backend
     ports:
-      - protocol: TCP
-        port: 443
-        targetPort: 443
+    - name: port-4443
+      protocol: TCP
+      port: 4443
+      targetPort: 4443
+    - name: port-443
+      protocol: TCP
+      port: 443
+      targetPort: 443
     type:
         LoadBalancer

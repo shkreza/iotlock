@@ -6,7 +6,7 @@ print('TLS SECRETS: {}'.format(tls_secrets))
 
 def main():
     server_config = {
-        'port': 443,
+        'port': 4443,
         'host': '0.0.0.0',
         'debug': True,
         'ssl_context': get_tls_cert_key_paths()

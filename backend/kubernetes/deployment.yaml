@@ -15,11 +15,30 @@ spec:
         app: lock-backend
     spec:
       containers:
-      - name: lock-backend
-        image: shkreza/lock-backend:v0.0.4
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:1
+        args: [
+          "--ssl_port=443",
+          "--backend=https://127.0.0.1:4443",
+          "--service=lock.endpoints.iot-api-gateway.cloud.goog",
+          "--rollout_strategy=managed",
+          "--service_account_key=/secrets/lock-backend/gcp-secrets/sa-lock-esp.json"
+        ]
         ports:
         - name: port-443
           containerPort: 443
+        volumeMounts:
+        - mountPath: /secrets/lock-backend/gcp-secrets/
+          name: gcp-secrets
+          readOnly: true
+        - mountPath: /etc/nginx/ssl
+          name: tls-esp-secrets
+          readOnly: true
+      - name: lock-backend
+        image: shkreza/lock-backend:v0.0.5
+        ports:
+        - name: port-4443
+          containerPort: 4443
         resources:
           limits:
             cpu: 0.2
@@ -31,10 +50,17 @@ spec:
         - name: tls-secrets
           mountPath: /secrets/lock-backend/tls-secrets
           readOnly: true
+
       volumes:
+      - name: gcp-secrets
+        secret:
+          secretName: gcp-secrets
       - name: iot-hub-secrets
         secret:
           secretName: iot-hub-secrets
       - name: tls-secrets
         secret:
           secretName: tls-secrets
+      - name: tls-esp-secrets
+        secret:
+          secretName: tls-esp-secrets

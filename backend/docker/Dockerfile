@@ -6,6 +6,7 @@ COPY . .
 
 RUN pip3 install -r requirements.txt
 
-EXPOSE 443
+# EXPOSE 443
+EXPOSE 4443
 
 ENTRYPOINT ["python3", "server/main.py"]
