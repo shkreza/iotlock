@@ -1,0 +1,58 @@
+swagger: "2.0"
+info:
+  description: "API to operate an IoT lock from Smart Azure Systems!"
+  version: "0.1.0"
+  title: "IoT Lock"
+  contact:
+    email: "rezas@microsoft.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "lock.shkreza.com"
+basePath: "/api/v0"
+tags:
+- name: "lock"
+  description: "Something that you can lock or unlock"
+  externalDocs:
+    description: "Find out more"
+    url: "http://lock.shkreza.com"
+schemes:
+- "https"
+paths:
+  /lock:
+    post:
+      tags:
+      - "pet"
+      summary: "Lock the lock"
+      description: "Lock the lock"
+      parameters:
+      - $ref: "#/parameters/iothub-deviceid"
+      - $ref: "#/parameters/iothub-hubname"
+      responses:
+        501:
+          description: "Not Implemented"
+    get:
+      tags:
+      - "pet"
+      summary: "Lock the lock"
+      description: "Lock the lock"
+      parameters:
+      - $ref: "#/parameters/iothub-deviceid"
+      - $ref: "#/parameters/iothub-hubname"
+      responses:
+        501:
+          description: "Not Implemented"
+
+parameters:
+  iothub-deviceid:
+    in: header
+    name: x-device-id
+    description: Device ID in IoT Hub
+    required: true
+    type: string
+  iothub-hubname:
+    in: header
+    name: x-hub-name
+    description: IoT Hub name
+    required: true
+    type: string

@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: lock-backend
+  labels:
+    app: lock-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lock-backend
+  template:
+    metadata:
+      labels:
+        app: lock-backend
+    spec:
+      containers:
+      - name: lock-backend
+        image: shkreza/lock-backend:v0.0.4
+        ports:
+        - name: port-443
+          containerPort: 443
+        resources:
+          limits:
+            cpu: 0.2
+            memory: "80Mi"
+        volumeMounts:
+        - name: iot-hub-secrets
+          mountPath: /secrets/lock-backend/iot-hub-connectionstring
+          readOnly: true
+        - name: tls-secrets
+          mountPath: /secrets/lock-backend/tls-secrets
+          readOnly: true
+      volumes:
+      - name: iot-hub-secrets
+        secret:
+          secretName: iot-hub-secrets
+      - name: tls-secrets
+        secret:
+          secretName: tls-secrets

@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+    name: lock-backend
+spec:
+    selector:
+        app: lock-backend
+    ports:
+      - protocol: TCP
+        port: 443
+        targetPort: 443
+    type:
+        LoadBalancer
