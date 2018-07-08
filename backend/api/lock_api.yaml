@@ -33,6 +33,8 @@ paths:
       responses:
         501:
           description: "Not Implemented"
+      security:
+      - firebase: []
     get:
       tags:
       - "pet"
@@ -45,7 +47,18 @@ paths:
       responses:
         501:
           description: "Not Implemented"
-
+      security:
+      - firebase: []
+securityDefinitions:
+  firebase:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    # Replace YOUR-PROJECT-ID with your project ID
+    x-google-issuer: "https://securetoken.google.com/iot-api-gateway"
+    x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+    # Optional. Replace YOUR-CLIENT-ID with your client ID
+    x-google-audiences: "iot-api-gateway"
 parameters:
   iothub-deviceid:
     in: header
