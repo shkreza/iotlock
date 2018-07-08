@@ -10,6 +10,12 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 # host: "lock.shkreza.com:4443"
 host: "lock.endpoints.iot-api-gateway.cloud.goog"
+x-google-endpoints: [
+  {
+    name: "lock.endpoints.iot-api-gateway.cloud.goog",
+    allowCors: true
+  }
+]
 basePath: "/api/v0"
 tags:
 - name: "lock"
@@ -23,7 +29,7 @@ paths:
   /lock:
     post:
       tags:
-      - "pet"
+      - "lock"
       summary: "Lock the lock"
       description: "Lock the lock"
       operationId: "lock_post"
@@ -37,7 +43,7 @@ paths:
       - firebase: []
     get:
       tags:
-      - "pet"
+      - "lock"
       summary: "Lock the lock"
       description: "Lock the lock"
       operationId: "lock_get"
