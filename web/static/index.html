@@ -1,0 +1,115 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+  <script lang="javascript">
+    var globalUser = null
+      , globalIdToken = null;
+
+    function initializeAll()
+    {
+      function initFirebase() {
+        // Initialize Firebase
+        var config = {
+          apiKey: "AIzaSyBH4aXTNkgDwesYZFM_xwtrmHWfsvEBfLQ",
+          authDomain: "iot-api-gateway.firebaseapp.com",
+          databaseURL: "https://iot-api-gateway.firebaseio.com",
+          projectId: "lock.endpoints.iot-api-gateway.cloud.goog",
+          storageBucket: "iot-api-gateway.appspot.com",
+          messagingSenderId: "40059531788"
+        };
+
+        firebase.initializeApp(config);
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            globalUser = user;
+            // User is signed in.
+            var displayName = user.displayName;
+            var email = user.email;
+            var emailVerified = user.emailVerified;
+            var photoURL = user.photoURL;
+            var isAnonymous = user.isAnonymous;
+            var uid = user.uid;
+            var providerData = user.providerData;
+            console.log("User: " + JSON.stringify(user));
+            // ...
+          } else {
+            // User is signed out.
+            globalUser = user;
+          }
+        });
+      }
+
+      function initiateFirebaseUserLogin() {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          var user = result.user;
+          console.log("User: " + JSON.stringify(user));
+          console.log("Token: " + token);
+
+          firebase.auth().currentUser.getIdToken(true).then(function(idToken) { globalIdToken = idToken; console.log(idToken); })
+        }).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          var email = error.email;
+          var credential = error.credential;
+          
+          alert(error);
+        });
+      }
+
+      function invokeLockGet(userToken) {
+        if(!userToken) { alert("User needs to login."); return }
+
+        function invokeGetSuccess(data, status, jqXHR) {
+          const parsedResult = JSON.stringify(data);
+          console.log("Invoke get succeeded: " + parsedResult + ", " + status);
+          $("#div-result-id").html(parsedResult);
+        }
+        function invokeGetError(error) {
+          const parsedError = JSON.stringify(error)
+          console.log("Error occurred: " + parsedError);
+          $("#div-result-id").html(parsedError);
+        }
+
+        const iotApiGatewayUrl = "https://lock.shkreza.com/api/v0/lock";
+        $.ajax({
+          type: "POST",
+          url: iotApiGatewayUrl,
+          headers: {
+            "x-hub-name": "iot-hub-2",
+            "x-device-id": "deviceId1",
+            "Authorization": "Bearer " + userToken
+          },
+          contentType: "application/json",
+          success: invokeGetSuccess,
+          error: invokeGetError
+        })
+      }
+
+      function loginButtonClick() {
+        initiateFirebaseUserLogin();
+      }
+      
+      function lockButtonClicked() {
+        invokeLockGet(globalIdToken);
+      }
+
+      initFirebase();
+      $('#lock-button-id').click(lockButtonClicked);
+      $('#login-button-id').click(loginButtonClick);
+    }
+  </script>
+</head>
+<body onload="initializeAll()">
+  Press login and then lock or unlock
+  </p><button class="login-button-cls" id="login-button-id">Login</button>
+  </p><button class="lock-button-cls" id="lock-button-id">Lock or unlock</button>
+  </p><div class="div-result-cls" id="div-result-id"></div>
+</body>
+</html>
