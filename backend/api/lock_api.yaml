@@ -22,7 +22,7 @@ tags:
   description: "Something that you can lock or unlock"
   externalDocs:
     description: "Find out more"
-    url: "http://lock.shkreza.com"
+    url: "https://lock.shkreza.com"
 schemes:
 - "https"
 paths:

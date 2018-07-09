@@ -21,7 +21,6 @@ spec:
           "--ssl_port=443",
           "--backend=https://127.0.0.1:4443",
           "--service=lock.endpoints.iot-api-gateway.cloud.goog",
-          "--version=2018-07-08r7",
           "--rollout_strategy=managed",
           "--service_account_key=/secrets/lock-backend/gcp-secrets/sa-lock-esp.json"
         ]
