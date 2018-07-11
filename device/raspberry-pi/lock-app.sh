@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd $(dirname $0)
-python3 SimulatedDevice.py
+python3 lock_device.py
