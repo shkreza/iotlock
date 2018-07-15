@@ -67,7 +67,13 @@
         if(!userToken) { alert("User needs to login."); return }
 
         function invokeGetSuccess(data, status, jqXHR) {
+          console.log(data);
           const parsedResult = JSON.stringify(data);
+          encodedImage = JSON.parse(data.payload).encoded_image;
+          console.log(encodedImage);
+          var unsafe_b64_encoded = decodeURI(encodedImage);
+          // document.getElementById("image-id").setAttribute("src", "data:image/jpg;base64," + unsafe_b64_encoded);
+          $("#captured-image-id").attr("src", "data:image/jpg;base64," + unsafe_b64_encoded);
           console.log("Invoke get succeeded: " + parsedResult + ", " + status);
           $("#div-result-id").html(parsedResult);
         }
@@ -110,6 +116,7 @@
   Press login and then lock or unlock
   </p><button class="login-button-cls" id="login-button-id">Login</button>
   </p><button class="lock-button-cls" id="lock-button-id">Lock or unlock</button>
+  </p><img class="captured-image-cls" id="captured-image-id"></img>
   </p><div class="div-result-cls" id="div-result-id"></div>
 </body>
 </html>

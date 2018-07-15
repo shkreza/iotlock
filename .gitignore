@@ -4,3 +4,4 @@ dev
 secrets
 old_secrets
 .DS_Store
+*.swp

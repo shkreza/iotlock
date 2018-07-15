@@ -1,9 +1,21 @@
 from iothub_client import IoTHubClient, IoTHubClientError, IoTHubTransportProvider, IoTHubClientResult
 from iothub_client import DeviceMethodReturnValue
 from grovepi import digitalWrite, digitalRead, pinMode
-import time
+from picamera import PiCamera
+from time import sleep
+from os import path, getcwd
+import sys
+from base64 import standard_b64encode
+from urllib.parse import quote_plus
 
-DEVICE_CONNECTION_STRING = 'HostName=iot-hub-2.azure-devices.net;DeviceId=deviceId1;SharedAccessKey=nyzcfE3uWQ4oZ4XOPMjDY4ndIRADowUyw4fsZ+zBjdo='
+FILENAME='capture.jpeg'
+FILEPATH = path.join(getcwd(), FILENAME)
+print(FILEPATH)
+
+IMAGE_SIZE=(320, 240)
+camera = PiCamera()
+
+DEVICE_CONNECTION_STRING = 'HostName=iot-hub-2.azure-devices.net;DeviceId=deviceId1;SharedAccessKey=0kjODrYQF0i0e5JiTuC7JiDuSCeK7wQwlnP+XKq+vrU='
 PROTOCOL = IoTHubTransportProvider.MQTT
 EXIT = False
 
@@ -17,6 +29,16 @@ def initialize_grovepi():
     global on_or_off
     initialized = pinMode(PIN, 'OUTPUT')
     on_or_off = digitalRead(PIN)
+
+def capture_image(image_size=None):
+    try:
+        camera.capture(FILEPATH, resize=image_size)
+        img = open(FILEPATH, 'rb').read()
+        enc = quote_plus(standard_b64encode(img))
+        return True, enc
+    except Exception as e:
+        return False, 'Error again: {}'.format(str(e))
+
 
 def device_method_cb(method_name, payload, user_context):
     global initialized
@@ -34,7 +56,10 @@ def device_method_cb(method_name, payload, user_context):
                 on_or_off = not on_or_off
                 digitalWrite(PIN, on_or_off)
 
-                device_method_return_value.response = "{{ \"Response\": \"Executed direct method {}, {}, {}\" }}".format(method_name, initialized, on_or_off)
+                capture_result, encoded_image = capture_image(IMAGE_SIZE)
+                json_response = "{{ \"Response\": \"Executed direct method {}, {}, {}\", \"capture_result\": \"{}\", \"encoded_image\": \"{}\" }}".format(method_name, initialized, on_or_off, capture_result, encoded_image)
+                # print(json_response)
+                device_method_return_value.response = json_response
                 device_method_return_value.status = 200
         except ValueError:
             # Build and send an error response.
@@ -45,19 +70,6 @@ def device_method_cb(method_name, payload, user_context):
         device_method_return_value.response = "{ \"Response\": \"Direct method not defined: %s\" }" % method_name
         device_method_return_value.status = 404
     return device_method_return_value
-    if method_name == 'lockDoor':
-        print('Method is lockDoor')
-        device_method_return_val.status = 200
-        device_method_return_val.response = '{"message": "All done"}'
-    if method_name == 'exit':
-        print('Method is exit!')
-        global EXIT
-        EXIT = True
-
-    else:
-        device_method_return_val.status = 404
-        device_method_return_val.response = '{"error": "Direct method {} not found"}'.format(method_name)
-    return device_method_return_val
 
 def main():
     initialize_grovepi()
@@ -66,7 +78,7 @@ def main():
     global EXIT
     while not EXIT:
         print('.')
-        time.sleep(1)
+        sleep(1)
     print('Exiting...')
 
 if __name__ == '__main__':
