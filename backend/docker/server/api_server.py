@@ -7,6 +7,7 @@ SERVICE_CONNECTION_STRINGS = {
     'iot-hub-2': get_iot_hub_connection_string()
 }
 METHOD_NAME = 'lockDoor'
+CAPTURE_METHOD_NAME = 'captureLock'
 METHOD_PAYLOAD = '10'
 TIMEOUT = 10
 
@@ -97,9 +98,35 @@ def api_get_lock_state(hub_name, device_id):
     message = 'Found these parameters: hub_name={}, device_id={}'.format(hub_name, device_id)
     return make_response(jsonify({'message': message}), 200)
 
+@app.route(API_BASE_PATH + '/lock/capture', methods=['GET'], provide_automatic_options=False)
+@requires_device_id
+@requires_hub_name
+@add_allow_cross_reference_headers
+def api_capture_lock_state(hub_name, device_id):
+    print('Processing GET capture request...')
+    assert(device_id)
+    assert(hub_name)
+    
+    method_response = invoke_device(hub_name, device_id, CAPTURE_METHOD_NAME)
+    if not method_response:
+        return make_error_response('Error occurred: {}'.format('Invocation failed; device might be offline.'), 500)
+    if method_response.status == 200:
+        return make_response(jsonify({'payload': method_response.payload}), 200)
+    else:
+        return make_error_response('Error occurred: {}'.format(method_response.payload), method_response.status)
+    message = 'Found these parameters: hub_name={}, device_id={}'.format(hub_name, device_id)
+    return make_response(jsonify({'message': message}), 200)
+
+@app.route(API_BASE_PATH + '/lock/capture', methods=['OPTIONS'])
+@add_allow_cross_reference_headers
+def cross_reference_headers_lock_capture():
+    print('Processing OPTIONS request...')
+    response = make_response()
+    return response
+
 @app.route(API_BASE_PATH + '/lock', methods=['OPTIONS'])
 @add_allow_cross_reference_headers
-def corss_reference_options():
+def cross_reference_headers_lock():
     print('Processing OPTIONS request...')
     response = make_response()
     return response

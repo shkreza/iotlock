@@ -15,19 +15,19 @@ GCP_SERVICE_NAME="lock.endpoints.iot-api-gateway.cloud.goog"
 ESP_CONTAINER_PORT=443
 ESP_HOST_PORT=443
 SECRET_SA_LOCK_BACKEND_FILENAME="sa-lock-esp.json"
-SECRET_SA_LOCK_BACKEND_DIR=$(cd $BIN_DIR_ABSOLUATE/../secrets/lock-backend/gcp-secrets/; pwd)
+SECRET_SA_LOCK_BACKEND_DIR=$(cd $BIN_DIR_ABSOLUATE/../secrets/gcp-secrets/; pwd)
 SECRET_SA_LOCK_BACKEND_MOUNT="/secrets/lock-backend/gcp-secrets"
 SECRET_SA_LOCK_BACKEND_PATH="$SECRET_SA_LOCK_BACKEND_MOUNT/$(basename $SECRET_SA_LOCK_BACKEND_FILENAME)"
-SECRET_TLS_ESP=$(cd $BIN_DIR_ABSOLUATE/../secrets/lock-backend/tls-esp-secrets/; pwd)
+SECRET_TLS_ESP=$(cd $BIN_DIR_ABSOLUATE/../secrets/tls-esp-backend/; pwd)
 SECRET_TLS_ESP_MOUNT="/etc/nginx/ssl"
 
 BACKEND_IMAGE_NAME="shkreza/lock-backend:latest"
 BACKEND_CONTAINER_NAME="lock-backend"
 BACKEND_CONTAINER_PORT=4443
 BACKEND_HOST_PORT=4443
-SECRETS_TLS=$(cd $BIN_DIR_ABSOLUATE/../secrets/lock-backend/tls-secrets/; pwd)
+SECRETS_TLS=$(cd $BIN_DIR_ABSOLUATE/../secrets/tls-backend/; pwd)
 SECRETS_TLS_MOUNT="/secrets/lock-backend/tls-secrets"
-SECRETS_IOT_HUB_CONNECTIONSTRING=$(cd $BIN_DIR_ABSOLUATE/../secrets/lock-backend/iot-hub-connectionstring/; pwd)
+SECRETS_IOT_HUB_CONNECTIONSTRING=$(cd $BIN_DIR_ABSOLUATE/../secrets/iot-hub-connectionstring/; pwd)
 SECRETS_IOT_HUB_CONNECTIONSTRING_MOUNT="/secrets/lock-backend/iot-hub-connectionstring"
 
 # PULL ESP DOCKER

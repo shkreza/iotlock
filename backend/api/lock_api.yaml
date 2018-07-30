@@ -23,6 +23,11 @@ tags:
   externalDocs:
     description: "Find out more"
     url: "https://lock.shkreza.com"
+- name: "capture"
+  description: "Captures an image"
+  externalDocs:
+    description: "Find out more"
+    url: "https://lock.shkreza.com"
 schemes:
 - "https"
 paths:
@@ -47,6 +52,22 @@ paths:
       summary: "Lock the lock"
       description: "Lock the lock"
       operationId: "lock_get"
+      parameters:
+      - $ref: "#/parameters/iothub-deviceid"
+      - $ref: "#/parameters/iothub-hubname"
+      responses:
+        501:
+          description: "Not Implemented"
+      security:
+      - firebase: []
+  /lock/capture:
+    get:
+      tags:
+      - "lock"
+      - "capture"
+      summary: "Capture image of the lock"
+      description: "Capture image of the lock"
+      operationId: "lock_capture_get"
       parameters:
       - $ref: "#/parameters/iothub-deviceid"
       - $ref: "#/parameters/iothub-hubname"

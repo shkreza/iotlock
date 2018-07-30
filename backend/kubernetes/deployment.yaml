@@ -35,7 +35,7 @@ spec:
           name: tls-esp-secrets
           readOnly: true
       - name: lock-backend
-        image: shkreza/lock-backend:v0.0.8
+        image: shkreza/lock-backend:v0.0.12
         ports:
         - name: port-4443
           containerPort: 4443

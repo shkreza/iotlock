@@ -98,6 +98,42 @@
         })
       }
 
+      function invokeLockCapture(userToken) {
+        if(!userToken) { alert("User needs to login."); return }
+
+        function invokeCaptureSuccess(data, status, jqXHR) {
+          console.log(data);
+          const parsedResult = JSON.stringify(data);
+          encodedImage = JSON.parse(data.payload).encoded_image;
+          console.log(encodedImage);
+          var unsafe_b64_encoded = decodeURI(encodedImage);
+          // document.getElementById("image-id").setAttribute("src", "data:image/jpg;base64," + unsafe_b64_encoded);
+          $("#captured-image-id").attr("src", "data:image/jpg;base64," + unsafe_b64_encoded);
+          console.log("Invoke get succeeded: " + parsedResult + ", " + status);
+          $("#div-result-id").html(parsedResult);
+        }
+
+        function invokeCaptureError(error) {
+          const parsedError = JSON.stringify(error)
+          console.log("Error occurred: " + parsedError);
+          $("#div-result-id").html(parsedError);
+        }
+
+        const iotApiGatewayUrl = "https://api.lock.shkreza.com/api/v0/lock/capture";
+        $.ajax({
+          type: "GET",
+          url: iotApiGatewayUrl,
+          headers: {
+            "x-hub-name": "iot-hub-2",
+            "x-device-id": "deviceId1",
+            "Authorization": "Bearer " + userToken
+          },
+          contentType: "application/json",
+          success: invokeCaptureSuccess,
+          error: invokeCaptureError
+        })
+      }
+
       function loginButtonClick() {
         initiateFirebaseUserLogin();
       }
@@ -105,10 +141,15 @@
       function lockButtonClicked() {
         invokeLockGet(globalIdToken);
       }
+      
+      function captureButtonClick() {
+        invokeLockCapture(globalIdToken);
+      }
 
       initFirebase();
       $('#lock-button-id').click(lockButtonClicked);
       $('#login-button-id').click(loginButtonClick);
+      $('#capture-button-id').click(captureButtonClick);
     }
   </script>
 </head>
@@ -116,6 +157,7 @@
   Press login and then lock or unlock
   </p><button class="login-button-cls" id="login-button-id">Login</button>
   </p><button class="lock-button-cls" id="lock-button-id">Lock or unlock</button>
+  </p><button class="capture-button-cls" id="capture-button-id">Capture image</button>
   </p><img class="captured-image-cls" id="captured-image-id"></img>
   </p><div class="div-result-cls" id="div-result-id"></div>
 </body>
